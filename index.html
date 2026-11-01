@@ -1,37 +1,111 @@
-<div class="scada-layout">
-    <!-- Evaporator -->
-    <div class="component evaporator">
-        <div class="comp-title">Evaporator</div>
-        <div class="readout">Water In: <span id="vIn">--.-</span></div>
-        <div class="readout">Water Out: <span id="vOut">--.-</span></div>
-        <div class="readout">Sensor A: <span id="evA">--.-</span></div>
-        <div class="readout">Sensor B: <span id="evB">--.-</span></div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIDZO MONT - SCADA Controller</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>NIDZO MONT DOOEL</h1>
+        <h3>SCADA System for Heat Pump Control</h3>
 
-    <!-- Compressor 1 -->
-    <div class="component compressor">
-        <div class="comp-title">Compressor 1</div>
-        <div class="readout">Pressure: <span id="p1">--.0</span> bar</div>
-        <div class="readout">Temperature: <span id="t1">--.0</span> °C</div>
-    </div>
+        <div class="scada-layout">
+            <!-- Evaporator -->
+            <div class="component evaporator">
+                <div class="comp-title">Evaporator</div>
+                <div class="readout">Water In: <span id="vIn">--.-</span></div>
+                <div class="readout">Water Out: <span id="vOut">--.-</span></div>
+                <div class="readout">Sensor A: <span id="evA">--.-</span></div>
+                <div class="readout">Sensor B: <span id="evB">--.-</span></div>
+            </div>
 
-    <!-- Compressor 2 -->
-    <div class="component compressor">
-        <div class="comp-title">Compressor 2</div>
-        <div class="readout">Pressure: <span id="p2">--.0</span> bar</div>
-        <div class="readout">Temperature: <span id="t2">--.0</span> °C</div>
-    </div>
+            <!-- Compressor 1 -->
+            <div class="component compressor">
+                <div class="comp-title">Compressor 1</div>
+                <div class="readout">Pressure: <span id="p1">--.0</span> bar</div>
+                <div class="readout">Temperature: <span id="t1">--.0</span> °C</div>
+            </div>
 
-    <!-- Condenser -->
-    <div class="component condenser">
-        <div class="comp-title">Condenser</div>
-        <div class="readout">Sensor A: <span id="cnA">--.-</span></div>
-        <div class="readout">Sensor B: <span id="cnB">--.-</span></div>
-    </div>
+            <!-- Compressor 2 -->
+            <div class="component compressor">
+                <div class="comp-title">Compressor 2</div>
+                <div class="readout">Pressure: <span id="p2">--.0</span> bar</div>
+                <div class="readout">Temperature: <span id="t2">--.0</span> °C</div>
+            </div>
 
-    <!-- Water Circuit -->
-    <div class="component water-circuit">
-        <div class="comp-title">Water Circuit</div>
-        <div class="readout">Flow Rate: <span id="flowRate">--.0</span> L/min</div>
+            <!-- Condenser -->
+            <div class="component condenser">
+                <div class="comp-title">Condenser</div>
+                <div class="readout">Sensor A: <span id="cnA">--.-</span></div>
+                <div class="readout">Sensor B: <span id="cnB">--.-</span></div>
+            </div>
+
+            <!-- Water Circuit -->
+            <div class="component water-circuit">
+                <div class="comp-title">Water Circuit</div>
+                <div class="readout">Flow Rate: <span id="flowRate">--.0</span> L/min</div>
+            </div>
+
+            <!-- Refrigerant Circuits -->
+            <div class="refrigerant-circuit">
+                <div class="comp-title">Refrigerant Circuit 1</div>
+                <div class="readout">Pressure: <span id="p3">--.0</span> bar</div>
+                <div class="readout">Temperature: <span id="t3">--.0</span> °C</div>
+            </div>
+
+            <div class="refrigerant-circuit">
+                <div class="comp-title">Refrigerant Circuit 2</div>
+                <div class="readout">Pressure: <span id="p4">--.0</span> bar</div>
+                <div class="readout">Temperature: <span id="t4">--.0</span> °C</div>
+            </div>
+
+            <!-- 4-Way Valve -->
+            <div class="component four-way-valve">
+                <div class="comp-title">4-Way Valve</div>
+                <img src="images/4-way-valve.png" alt="4-Way Valve">
+            </div>
+
+            <!-- Fans -->
+            <div class="component fan">
+                <div class="comp-title">Fan 1</div>
+                <img src="images/fan.png" alt="Fan">
+            </div>
+            <div class="component fan">
+                <div class="comp-title">Fan 2</div>
+                <img src="images/fan.png" alt="Fan">
+            </div>
+
+            <!-- Animated Water Circuit -->
+            <div class="pipe-line pipe-top">
+                <div id="dot1" class="flow-dot"></div>
+                <div id="dot2" class="flow-dot flow-reverse"></div>
+            </div>
+            <div class="pipe-line pipe-bottom">
+                <div id="dot3" class="flow-dot"></div>
+                <div id="dot4" class="flow-dot flow-reverse"></div>
+            </div>
+
+            <!-- Animated Refrigerant Circuits -->
+            <div class="refrigerant-circuit">
+                <div id="dot5" class="flow-dot"></div>
+                <div id="dot6" class="flow-dot flow-reverse"></div>
+            </div>
+            <div class="refrigerant-circuit">
+                <div id="dot7" class="flow-dot"></div>
+                <div id="dot8" class="flow-dot flow-reverse"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <button class="btn btn-start">Start</button>
+            <button class="btn btn-stop">Stop</button>
+            <button class="btn btn-mode-ladi">Mode: LADI</button>
+            <button class="btn btn-mode-gree">Mode: GREE</button>
+        </div>
+
     </div>
-</div>
+</body>
+</html>
