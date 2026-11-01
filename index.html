@@ -1,284 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIDZO MONT - СКАДА Контролер</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #1e1e24;
-            margin: 0;
-            padding: 15px;
-            color: #fff;
-            text-align: center;
-        }
-        .container {
-            max-width: 650px;
-            background-color: #2d2d3a;
-            margin: 0 auto;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        h1 {
-            color: #f8fafc;
-            font-size: 26px;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-        h3 {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        /* ГРАФИЧКА СКАДА ШЕМА */
-        .scada-layout {
-            position: relative;
-            background-color: #14141b;
-            border: 2px solid #3f3f46;
-            border-radius: 12px;
-            height: 320px;
-            margin-bottom: 20px;
-            padding: 10px;
-            overflow: hidden;
-        }
-        .component {
-            position: absolute;
-            width: 140px;
-            height: 180px;
-            border-radius: 10px;
-            border: 2px solid #000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: left;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .evaporator {
-            top: 30px;
-            left: 30px;
-            background-color: linear-gradient(135deg, #1e3a8a, #0284c7);
-        }
-        .condenser {
-            top: 30px;
-            right: 30px;
-            background-color: linear-gradient(135deg, #7c2d12, #ea580c);
-        }
-        .comp-title {
-            font-size: 14px;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(255,255,255,0.4);
-            padding-bottom: 4px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-        .readout {
-            font-size: 12px;
-            margin: 6px 0;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-        }
-        .readout span {
-            font-weight: bold;
-            color: #f8fafc;
-            background-color: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* ЦЕВКИ И АНИМАЦИЈА НА ТЕК */
-        .pipe-line {
-            position: absolute;
-            background-color: #52525b;
-            border-radius: 4px;
-            z-index: 1;
-        }
-        .pipe-top {
-            top: 80px;
-            left: 170px;
-            width: 310px;
-            height: 8px;
-        }
-        .pipe-bottom {
-            top: 150px;
-            left: 170px;
-            width: 310px;
-            height: 8px;
-        }
-        .flow-dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #22c55e;
-            top: 1px;
-            animation: flowAnim 2s infinite linear;
-            display: none;
-        }
-        .flow-reverse {
-            animation: flowReverseAnim 2s infinite linear;
-            background-color: #3b82f6;
-        }
-
-        /* СРЕДЕН ДЕЛ ЗА ЗАДАДЕНА */
-        .setpoint-box {
-            background-color: #14141b;
-            border: 2px dashed #0d9488;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .setpoint-box label {
-            font-size: 13px;
-            color: #2dd4bf;
-            text-transform: uppercase;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .setpoint-box span {
-            font-size: 28px;
-            font-weight: 900;
-            color: #2dd4bf;
-        }
-
-        /* ИНЖЕНЕРСКИ КОПЧИЊА */
-        .control-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .btn {
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn:active {
-            transform: scale(0.98);
-        }
-        .btn-start {
-            background-color: #16a34a;
-            box-shadow: 0 4px 12px rgba(22,163,74,0.3);
-        }
-        .btn-stop {
-            background-color: #dc2626;
-            box-shadow: 0 4px 12px rgba(220,38,38,0.3);
-        }
-        .btn-mode-ladi {
-            background-color: #2563eb;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
-        }
-        .btn-mode-gree {
-            background-color: #ea580c;
-            box-shadow: 0 4px 12px rgba(234,88,12,0.3);
-        }
-        .btn-temp {
-            background-color: #4b5563;
-        }
-
-        @keyframes flowAnim {
-            0% { left: 0px; }
-            100% { left: 130px; }
-        }
-        @keyframes flowReverseAnim {
-            0% { left: 130px; }
-            100% { left: 0px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>NIDZO MONT DOOEL</h1>
-        <h3>Симулација на топлинска пумпа во живо</h3>
-
-        <div class="scada-layout">
-            <!-- Испарувач -->
-            <div class="component evaporator">
-                <div class="comp-title">Испарувач</div>
-                <div class="readout">Вода Влез: <span id="vIn">--.-</span></div>
-                <div class="readout">Вода Излез: <span id="vOut">--.-</span></div>
-                <div class="readout">Сонда А: <span id="evA">--.-</span></div>
-                <div class="readout">Сонда Б: <span id="evB">--.-</span></div>
-            </div>
-
-            <!-- Цевки -->
-            <div class="pipe-line pipe-top"><div id="dot1" class="flow-dot"></div></div>
-            <div class="pipe-line pipe-bottom"><div id="dot2" class="flow-dot flow-reverse"></div></div>
-
-            <!-- Кондензатор -->
-            <div class="component condenser">
-                <div class="comp-title">Кондензатор</div>
-                <div class="readout">Сонда А: <span id="cnA">--.-</span></div>
-                <div class="readout">Сонда Б: <span id="cnB">--.-</span></div>
-                <div class="readout" style="margin-top:25px; font-size:13px; color:#fed7aa;">STATUS:<br><span id="statusTxt" style="background:none; padding:0; font-size:13px; color:#fff;">--</span></div>
-            </div>
-        </div>
-
-        <div class="setpoint-box">
-            <label>Зададена Температура</label>
-            <span id="setpoint">--.-</span> °C
-        </div>
-
-        <div class="control-panel">
-            <button id="toggleBtn" class="btn btn-start" onclick="location.href='/toggle'">СТАРТ</button>
-            <button id="modeBtn" class="btn btn-mode-ladi" onclick="location.href='/mode'">РЕЖИМ: ЛАДЕЊЕ</button>
-            <button class="btn btn-temp" onclick="location.href='/tempup'">TEMP +</button>
-            <button class="btn btn-temp" onclick="location.href='/tempdown'">TEMP -</button>
-        </div>
+<div class="scada-layout">
+    <!-- Evaporator -->
+    <div class="component evaporator">
+        <div class="comp-title">Evaporator</div>
+        <div class="readout">Water In: <span id="vIn">--.-</span></div>
+        <div class="readout">Water Out: <span id="vOut">--.-</span></div>
+        <div class="readout">Sensor A: <span id="evA">--.-</span></div>
+        <div class="readout">Sensor B: <span id="evB">--.-</span></div>
     </div>
 
-    <script>
-        function updateDashboard() {
-            fetch('/data')
-                .then(r => r.json())
-                .then(d => {
-                    document.getElementById('vIn').innerText = d.vIn.toFixed(1) + ' C';
-                    document.getElementById('vOut').innerText = d.vOut.toFixed(1) + ' C';
-                    document.getElementById('evA').innerText = d.evA.toFixed(1) + ' C';
-                    document.getElementById('evB').innerText = d.evB.toFixed(1) + ' C';
-                    document.getElementById('cnA').innerText = d.cnA.toFixed(1) + ' C';
-                    document.getElementById('cnB').innerText = d.cnB.toFixed(1) + ' C';
-                    document.getElementById('setpoint').innerText = d.setpoint.toFixed(1);
-                    document.getElementById('statusTxt').innerText = d.status;
+    <!-- Compressor 1 -->
+    <div class="component compressor">
+        <div class="comp-title">Compressor 1</div>
+        <div class="readout">Pressure: <span id="p1">--.0</span> bar</div>
+        <div class="readout">Temperature: <span id="t1">--.0</span> °C</div>
+    </div>
 
-                    // Контрола на анимација на цевките ако компресорот работи
-                    let dot1 = document.getElementById('dot1');
-                    let dot2 = document.getElementById('dot2');
-                    if(d.run === 1) {
-                        dot1.style.display = 'block';
-                        dot2.style.display = 'block';
-                    } else {
-                        dot1.style.display = 'none';
-                        dot2.style.display = 'none';
-                    }
+    <!-- Compressor 2 -->
+    <div class="component compressor">
+        <div class="comp-title">Compressor 2</div>
+        <div class="readout">Pressure: <span id="p2">--.0</span> bar</div>
+        <div class="readout">Temperature: <span id="t2">--.0</span> °C</div>
+    </div>
 
-                    // Рутирање на бои на копчињата
-                    let tBtn = document.getElementById('toggleBtn');
-                    if(d.run === 1) { tBtn.innerText = "СТОП"; tBtn.className = "btn btn-stop"; }
-                    else { tBtn.innerText = "СТАРТ"; tBtn.className = "btn btn-start"; }
+    <!-- Condenser -->
+    <div class="component condenser">
+        <div class="comp-title">Condenser</div>
+        <div class="readout">Sensor A: <span id="cnA">--.-</span></div>
+        <div class="readout">Sensor B: <span id="cnB">--.-</span></div>
+    </div>
 
-                    let mBtn = document.getElementById('modeBtn');
-                    if(d.heat === 1) { mBtn.innerText = "РЕЖИМ: ГРЕЕЊЕ"; mBtn.className = "btn btn-mode-gree"; }
-                    else { mBtn.innerText = "РЕЖИМ: ЛАДЕЊЕ"; mBtn.className = "btn btn-mode-ladi"; }
-                }).catch(e => console.log('Синхронизациска грешка:', e));
-        }
-
-        setInterval(updateDashboard, 1000);
-        updateDashboard();
-    </script>
-</body>
-</html>
+    <!-- Water Circuit -->
+    <div class="component water-circuit">
+        <div class="comp-title">Water Circuit</div>
+        <div class="readout">Flow Rate: <span id="flowRate">--.0</span> L/min</div>
+    </div>
+</div>
