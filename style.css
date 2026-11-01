@@ -1,3 +1,22 @@
+/* Basic styling */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #1e1e24;
+    margin: 0;
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+}
+
+.container {
+    max-width: 650px;
+    background-color: #2d2d3a;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
 .component {
     position: absolute;
     width: 140px;
@@ -32,7 +51,84 @@
 .readout span {
     font-weight: bold;
     color: #f8fafc;
-    background: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.3);
     padding: 2px 6px;
     border-radius: 4px;
+}
+
+.pipe-line {
+    position: absolute;
+    background-color: #52525b;
+    border-radius: 4px;
+    z-index: 1;
+}
+.pipe-top {
+    top: 80px; /* Adjusted for better spacing */
+    left: 170px;
+    width: 310px;
+    height: 8px;
+}
+.pipe-bottom {
+    top: 150px; /* Adjusted for better spacing */
+    left: 170px;
+    width: 310px;
+    height: 8px;
+}
+
+.flow-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #22c55e;
+    top: 1px; /* Adjusted for better spacing */
+    animation: flowAnim 2s infinite linear;
+    display: none;
+}
+.flow-reverse {
+    animation: flowReverseAnim 2s infinite linear;
+    background-color: #3b82f6;
+}
+
+@keyframes flowAnim {
+    0% { left: 0px; }
+    100% { left: 130px; }
+}
+@keyframes flowReverseAnim {
+    0% { left: 130px; }
+    100% { left: 0px; }
+}
+
+/* Control Panel */
+.control-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.btn {
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* Specific button styles */
+.btn-start { background-color: #16a34a; }
+.btn-stop { background-color: #dc2626; }
+.btn-mode-ladi { background-color: #2563eb; }
+.btn-mode-gree { background-color: #ea580c; }
+
+/* Images for components */
+img {
+    width: 100%;
 }
