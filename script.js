@@ -1,37 +1,39 @@
-function updateDashboard() {
-    fetch('/data')
-        .then(r => r.json())
-        .then(d => {
-            document.getElementById('vIn').innerText = d.vIn.toFixed(1) + ' C';
-            document.getElementById('vOut').innerText = d.vOut.toFixed(1) + ' C';
-            document.getElementById('evA').innerText = d.evA.toFixed(1) + ' C';
-            document.getElementById('evB').innerText = d.evB.toFixed(1) + ' C';
-            document.getElementById('cnA').innerText = d.cnA.toFixed(1) + ' C';
-            document.getElementById('cnB').innerText = d.cnB.toFixed(1) + ' C';
-            document.getElementById('setpoint').innerText = d.setpoint.toFixed(1);
-            document.getElementById('statusTxt').innerText = d.status;
+document.addEventListener('DOMContentLoaded', function() {
+    // Update sensor readings every second
+    setInterval(function() {
+        document.getElementById('vIn').textContent = Math.random().toFixed(2);
+        document.getElementById('vOut').textContent = Math.random().toFixed(2);
+        document.getElementById('evA').textContent = Math.random().toFixed(2);
+        document.getElementById('evB').textContent = Math.random().toFixed(2);
+        document.getElementById('p1').textContent = (Math.random() * 5 + 3).toFixed(1); // Example pressure
+        document.getElementById('t1').textContent = (Math.random() * 40 - 20).toFixed(1); // Example temperature
+        document.getElementById('p2').textContent = (Math.random() * 5 + 3).toFixed(1);
+        document.getElementById('t2').textContent = (Math.random() * 40 - 20).toFixed(1);
+        document.getElementById('cnA').textContent = Math.random().toFixed(2);
+        document.getElementById('cnB').textContent = Math.random().toFixed(2);
+        document.getElementById('flowRate').textContent = Math.random().toFixed(1); // Example flow rate
+        document.getElementById('p3').textContent = (Math.random() * 5 + 3).toFixed(1);
+        document.getElementById('t3').textContent = (Math.random() * 40 - 20).toFixed(1);
+        document.getElementById('p4').textContent = (Math.random() * 5 + 3).toFixed(1);
+        document.getElementById('t4').textContent = (Math.random() * 40 - 20).toFixed(1);
 
-            // Контрола на анимација на цевките ако компресорот работи
-            let dot1 = document.getElementById('dot1');
-            let dot2 = document.getElementById('dot2');
-            if(d.run === 1) {
-                dot1.style.display = 'block';
-                dot2.style.display = 'block';
-            } else {
-                dot1.style.display = 'none';
-                dot2.style.display = 'none';
-            }
+        // Update flow dots
+        const dot1 = document.getElementById('dot1');
+        const dot2 = document.getElementById('dot2');
+        const dot3 = document.getElementById('dot3');
+        const dot4 = document.getElementById('dot4');
+        const dot5 = document.getElementById('dot5');
+        const dot6 = document.getElementById('dot6');
+        const dot7 = document.getElementById('dot7');
+        const dot8 = document.getElementById('dot8');
 
-            // Рутирање на бои на копчињата
-            let tBtn = document.getElementById('toggleBtn');
-            if(d.run === 1) { tBtn.innerText = "СТОП"; tBtn.className = "btn btn-stop"; }
-            else { tBtn.innerText = "СТАРТ"; tBtn.className = "btn btn-start"; }
-
-            let mBtn = document.getElementById('modeBtn');
-            if(d.heat === 1) { mBtn.innerText = "РЕЖИМ: ГРЕЕЊЕ"; mBtn.className = "btn btn-mode-gree"; }
-            else { mBtn.innerText = "РЕЖИМ: ЛАДЕЊЕ"; mBtn.className = "btn btn-mode-ladi"; }
-        }).catch(e => console.log('Синхронизациска грешка:', e));
-}
-
-setInterval(updateDashboard, 1000);
-updateDashboard();
+        dot1.style.left = Math.random() * 130 + 'px';
+        dot2.style.left = (Math.random() * 130) - 130 + 'px'; // Reverse direction
+        dot3.style.left = Math.random() * 130 + 'px';
+        dot4.style.left = (Math.random() * 130) - 130 + 'px'; // Reverse direction
+        dot5.style.left = Math.random() * 130 + 'px';
+        dot6.style.left = (Math.random() * 130) - 130 + 'px'; // Reverse direction
+        dot7.style.left = Math.random() * 130 + 'px';
+        dot8.style.left = (Math.random() * 130) - 130 + 'px'; // Reverse direction
+    }, 1000);
+});
