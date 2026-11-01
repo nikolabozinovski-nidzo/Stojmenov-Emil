@@ -1,0 +1,31 @@
+/* Your CSS styles here */
+.container {
+    max-width: 650px;
+    background: #2d2d3a;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+h1 {
+    color: #f8fafc;
+    font-size: 26px;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+button {
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    color: white;
+}
+
+button:hover {
+    background-color: #4CAF50; /* Green */
+}
