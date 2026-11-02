@@ -1,4 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
+const ESP32_ADDRESS = "http://your-ddns-address.com"; // Replace with your actual public IP or DDNS
+
+function act(u) { 
+  fetch(ESP32_ADDRESS + u).then(function(){ setTimeout(refresh, 150); }); 
+}
+function refresh() {
+  fetch(ESP32_ADDRESS + '/data').then(function(r){ return r.json(); }).then(function(d){
+    // ... rest of the refresh logicdocument.addEventListener('DOMContentLoaded', function() {
     // Update sensor readings every second
     setInterval(function() {
         document.getElementById('vIn').textContent = Math.random().toFixed(2);
