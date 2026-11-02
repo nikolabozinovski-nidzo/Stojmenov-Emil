@@ -1,111 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIDZO MONT - SCADA Controller</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIDZO MONT DOOEL — Chiller / Heat Pump Live</title>
+<style>
+:root{--water:#29b6f6;--c1:#e8590c;--c2:#1b1f23;--bg:#f4f7fa;--card:#fff;--ink:#22303c;--mut:#7b8794;--ok:#2e9e5b;--err:#d64545;}
+body.heat{--water:#ef6c00;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;background:#fff;border-bottom:1px solid #e3e8ee;position:sticky;top:0;z-index:5;}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0288d1,#29b6f6);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;}
+body.heat .logo{background:linear-gradient(135deg,#e8590c,#ffb74d);}
+h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.3px;}
+.sub{font-size:12px;color:var(--mut);margin-top:2px;}
+.pill{margin-left:auto;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;background:#eceff3;color:#5b6672;border:1px solid #dfe4ea;}
+body.running .pill{background:#e5f6ec;color:var(--ok);border-color:#bfe6cd;}
+body.fault .pill{background:#fdecec;color:var(--err);border-color:#f2c4c4;animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:.45;}}
+.wrap{display:flex;flex-wrap:wrap;gap:18px;padding:18px 22px;align-items:flex-start;}
+.card{background:var(--card);border:1px solid #e3e8ee;border-radius:16px;box-shadow:0 4px 14px rgba(30,45,60,.06);}
+.schema{flex:1 1 620px;padding:8px;}
+.side{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:290px;}
+svg{width:100%;height:auto;display:block;}
+.wpipe{stroke:var(--water);stroke-width:5;fill:none;stroke-linecap:round;}
+.c1{stroke:var(--c1);stroke-width:3;fill:none;}
+.c2{stroke:var(--c2);stroke-width:3;fill:none;}
+.aw{fill:var(--water);}.a1{fill:var(--c1);}.a2{fill:var(--c2);}
+.ring{stroke:#6a7683;stroke-width:5;fill:#fff;}
+.hxbody{fill:#fff;stroke:#4b5560;stroke-width:3.5;}
+.plate{stroke:#e1e7ec;stroke-width:2;}
+.sym{fill:#fff;}
+.lbl{font:600 13px system-ui;fill:#33404d;}
+.cap{font:600 10px system-ui;fill:#8a95a1;letter-spacing:.4px;}
+.bv{font:700 12px ui-monospace,Consolas,monospace;}
+.b-w{fill:#e8f6fe;stroke:var(--water);}.t-w{fill:#0b6fa8;}
+.b-1{fill:#fdefe6;stroke:var(--c1);}.t-1{fill:#a33d0f;}
+.b-2{fill:#eef1f4;stroke:var(--c2);}.t-2{fill:#222;}
+.fin1{stroke:#f3c4a8;stroke-width:2;}.fin2{stroke:#9aa3ab;stroke-width:2;}
+.fanring1{fill:#fff;stroke:var(--c1);stroke-width:2.5;}
+.fanring2{fill:#fff;stroke:var(--c2);stroke-width:2.5;}
+.blades1 path{fill:#fdefe6;stroke:var(--c1);stroke-width:1.5;}
+.blades2 path{fill:#eef1f4;stroke:var(--c2);stroke-width:1.5;}
+.hub1{fill:var(--c1);}.hub2{fill:var(--c2);}
+.blades1,.blades2{transform-box:fill-box;transform-origin:center;}
+body.running .blades1,body.running .blades2{animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.fl{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:4 14;opacity:0;stroke-linecap:round;}
+body.running .fl{opacity:.95;animation:dash 1s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+.comp{transform-box:fill-box;transform-origin:center;}
+body.running .comp{animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{50%{transform:scale(1.07);}}
+.ctrl,.sens{padding:18px;}
+.cap2{display:block;font-size:10px;font-weight:700;color:var(--mut);letter-spacing:.6px;}
+.setrow{display:flex;align-items:center;gap:12px;justify-content:space-between;}
+.setbox{flex:1;text-align:center;background:#f7fafc;border:1px solid #e3e8ee;border-radius:12px;padding:8px 6px;}
+#setpoint{font-size:34px;font-weight:800;}
+.unit{font-size:15px;color:var(--mut);font-weight:700;margin-left:4px;}
+.rnd{width:52px;height:52px;border-radius:50%;border:1px solid #dfe4ea;background:#fff;font-size:26px;font-weight:800;color:#33404d;cursor:pointer;}
+.rnd:active{transform:scale(.93);}
+.btnrow{display:flex;gap:12px;margin-top:14px;}
+.big{flex:1;padding:16px 0;border:none;border-radius:12px;font-size:17px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.5px;box-shadow:0 3px 8px rgba(0,0,0,.15);}
+.big:active{transform:scale(.97);}
+#btn-power{background:#2e9e5b;}#btn-power.on{background:#d64545;}
+#btn-mode{background:#0288d1;}body.heat #btn-mode{background:#e8590c;}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.sitem{display:flex;gap:10px;align-items:center;background:#f7fafc;border:1px solid #e9eef3;border-radius:12px;padding:10px;}
+.sitem b{font-size:16px;font-family:ui-monospace,Consolas,monospace;}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;}
+.dw{background:var(--water);}.d1{background:var(--c1);}.d2{background:var(--c2);}
+footer{padding:6px 22px 20px;color:var(--mut);font-size:11px;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>NIDZO MONT DOOEL</h1>
-        <h3>SCADA System for Heat Pump Control</h3>
-
-        <div class="scada-layout">
-            <!-- Evaporator -->
-            <div class="component evaporator">
-                <div class="comp-title">Evaporator</div>
-                <div class="readout">Water In: <span id="vIn">--.-</span></div>
-                <div class="readout">Water Out: <span id="vOut">--.-</span></div>
-                <div class="readout">Sensor A: <span id="evA">--.-</span></div>
-                <div class="readout">Sensor B: <span id="evB">--.-</span></div>
-            </div>
-
-            <!-- Compressor 1 -->
-            <div class="component compressor">
-                <div class="comp-title">Compressor 1</div>
-                <div class="readout">Pressure: <span id="p1">--.0</span> bar</div>
-                <div class="readout">Temperature: <span id="t1">--.0</span> °C</div>
-            </div>
-
-            <!-- Compressor 2 -->
-            <div class="component compressor">
-                <div class="comp-title">Compressor 2</div>
-                <div class="readout">Pressure: <span id="p2">--.0</span> bar</div>
-                <div class="readout">Temperature: <span id="t2">--.0</span> °C</div>
-            </div>
-
-            <!-- Condenser -->
-            <div class="component condenser">
-                <div class="comp-title">Condenser</div>
-                <div class="readout">Sensor A: <span id="cnA">--.-</span></div>
-                <div class="readout">Sensor B: <span id="cnB">--.-</span></div>
-            </div>
-
-            <!-- Water Circuit -->
-            <div class="component water-circuit">
-                <div class="comp-title">Water Circuit</div>
-                <div class="readout">Flow Rate: <span id="flowRate">--.0</span> L/min</div>
-            </div>
-
-            <!-- Refrigerant Circuits -->
-            <div class="refrigerant-circuit">
-                <div class="comp-title">Refrigerant Circuit 1</div>
-                <div class="readout">Pressure: <span id="p3">--.0</span> bar</div>
-                <div class="readout">Temperature: <span id="t3">--.0</span> °C</div>
-            </div>
-
-            <div class="refrigerant-circuit">
-                <div class="comp-title">Refrigerant Circuit 2</div>
-                <div class="readout">Pressure: <span id="p4">--.0</span> bar</div>
-                <div class="readout">Temperature: <span id="t4">--.0</span> °C</div>
-            </div>
-
-            <!-- 4-Way Valve -->
-            <div class="component four-way-valve">
-                <div class="comp-title">4-Way Valve</div>
-                <img src="images/4-way-valve.png" alt="4-Way Valve">
-            </div>
-
-            <!-- Fans -->
-            <div class="component fan">
-                <div class="comp-title">Fan 1</div>
-                <img src="images/fan.png" alt="Fan">
-            </div>
-            <div class="component fan">
-                <div class="comp-title">Fan 2</div>
-                <img src="images/fan.png" alt="Fan">
-            </div>
-
-            <!-- Animated Water Circuit -->
-            <div class="pipe-line pipe-top">
-                <div id="dot1" class="flow-dot"></div>
-                <div id="dot2" class="flow-dot flow-reverse"></div>
-            </div>
-            <div class="pipe-line pipe-bottom">
-                <div id="dot3" class="flow-dot"></div>
-                <div id="dot4" class="flow-dot flow-reverse"></div>
-            </div>
-
-            <!-- Animated Refrigerant Circuits -->
-            <div class="refrigerant-circuit">
-                <div id="dot5" class="flow-dot"></div>
-                <div id="dot6" class="flow-dot flow-reverse"></div>
-            </div>
-            <div class="refrigerant-circuit">
-                <div id="dot7" class="flow-dot"></div>
-                <div id="dot8" class="flow-dot flow-reverse"></div>
-            </div>
-        </div>
-
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <button class="btn btn-start">Start</button>
-            <button class="btn btn-stop">Stop</button>
-            <button class="btn btn-mode-ladi">Mode: LADI</button>
-            <button class="btn btn-mode-gree">Mode: GREE</button>
-        </div>
-
+<header>
+  <div class="logo">&#10052;</div>
+  <div><h1>NIDZO MONT DOOEL</h1><div class="sub">Chiller / Heat-pump controller &mdash; live schema</div></div>
+  <div class="pill" id="statuspill">STATUS: --</div>
+</header>
+<div class="wrap">
+  <div class="card schema">
+  <svg viewBox="0 0 1000 640" role="img" aria-label="Hydraulic schema">
+    <path class="wpipe" d="M 640 70 H 500 V 146"/><path class="wpipe" d="M 500 394 V 470 H 640"/>
+    <polygon class="aw" points="493,98 507,98 500,112"/><polygon class="aw" points="493,433 507,433 500,447"/>
+    <path class="c1" d="M 570 160 H 880 Q 900 160 900 180 V 195"/><path class="c1" d="M 900 345 V 360 Q 900 380 880 380 H 570"/>
+    <polygon class="a1" points="633,153 633,167 647,160"/><polygon class="a1" points="847,373 847,387 833,380"/>
+    <path class="c2" d="M 430 160 H 120 Q 100 160 100 180 V 195"/><path class="c2" d="M 100 345 V 360 Q 100 380 120 380 H 430"/>
+    <polygon class="a2" points="367,153 367,167 353,160"/><polygon class="a2" points="153,373 153,387 167,380"/>
+    <path class="fl" d="M 640 70 H 500 V 146"/><path class="fl" d="M 500 394 V 470 H 640"/>
+    <path class="fl" d="M 570 160 H 880 Q 900 160 900 180 V 195"/><path class="fl" d="M 900 345 V 360 Q 900 380 880 380 H 570"/>
+    <path class="fl" d="M 430 160 H 120 Q 100 160 100 180 V 195"/><path class="fl" d="M 100 345 V 360 Q 100 380 120 380 H 430"/>
+    <rect class="hxbody" x="430" y="140" width="140" height="260" rx="18"/>
+    <path class="plate" d="M448 210 H552 M448 240 H552 M448 270 H552 M448 300 H552 M448 330 H552"/>
+    <circle class="ring" cx="455" cy="160" r="10"/><circle class="ring" cx="545" cy="160" r="10"/><circle class="ring" cx="500" cy="162" r="16"/>
+    <circle class="ring" cx="455" cy="380" r="10"/><circle class="ring" cx="545" cy="380" r="10"/><circle class="ring" cx="500" cy="378" r="16"/>
+    <g class="comp"><circle class="sym c1" cx="760" cy="160" r="38"/><path class="c1" d="M740 140 L740 180 L784 160 Z"/></g>
+    <g class="comp"><circle class="sym c2" cx="240" cy="160" r="38"/><path class="c2" d="M260 140 L260 180 L216 160 Z"/></g>
+    <text class="cap" x="760" y="106" text-anchor="middle">KOMPRESOR I / COMPRESSOR I</text>
+    <text class="cap" x="240" y="106" text-anchor="middle">KOMPRESOR II / COMPRESSOR II</text>
+    <circle class="sym c1" cx="760" cy="380" r="32"/><path class="c1" d="M738 366 L760 380 L738 394 Z M782 366 L760 380 L782 394 Z"/>
+    <circle class="sym c2" cx="240" cy="380" r="32"/><path class="c2" d="M218 366 L240 380 L218 394 Z M262 366 L240 380 L262 394 Z"/>
+    <text class="cap" x="760" y="436" text-anchor="middle">EKSPANZ. VENTIL I / EXP. VALVE I</text>
+    <text class="cap" x="240" y="436" text-anchor="middle">EKSPANZ. VENTIL II / EXP. VALVE II</text>
+    <rect class="sym c1" x="868" y="195" width="64" height="150" rx="8"/><path class="fin1" d="M874 205 V335 M926 205 V335"/>
+    <g transform="translate(900,232)"><circle class="fanring1" r="24"/><g class="blades1">
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(90)"/>
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(180)"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(270)"/>
+    </g><circle class="hub1" r="3.5"/></g>
+    <g transform="translate(900,308)"><circle class="fanring1" r="24"/><g class="blades1">
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(90)"/>
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(180)"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(270)"/>
+    </g><circle class="hub1" r="3.5"/></g>
+    <text class="cap" transform="translate(952,270) rotate(90)" text-anchor="middle">KONDENZATOR A / AIR-COOLED CONDENSER A</text>
+    <rect class="sym c2" x="68" y="195" width="64" height="150" rx="8"/><path class="fin2" d="M74 205 V335 M126 205 V335"/>
+    <g transform="translate(100,232)"><circle class="fanring2" r="24"/><g class="blades2">
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(90)"/>
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(180)"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(270)"/>
+    </g><circle class="hub2" r="3.5"/></g>
+    <g transform="translate(100,308)"><circle class="fanring2" r="24"/><g class="blades2">
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(90)"/>
+      <path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(180)"/><path d="M0,-4 C 7,-7 11,-14 7,-18 C 3,-22 -4,-14 0,-4 Z" transform="rotate(270)"/>
+    </g><circle class="hub2" r="3.5"/></g>
+    <text class="cap" transform="translate(48,270) rotate(-90)" text-anchor="middle">KONDENZATOR B / AIR-COOLED CONDENSER B</text>
+    <text class="lbl" x="735" y="300" text-anchor="middle">LADEN KOL I / REFRIG. CIRCUIT I</text>
+    <text class="lbl" x="265" y="300" text-anchor="middle">LADEN KOL II / REFRIG. CIRCUIT II</text>
+    <text class="cap" x="655" y="52">VODA VLEZ / WATER INLET</text>
+    <rect class="b-w" x="655" y="60" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-w" id="t-vin" x="701" y="77" text-anchor="middle">--.-&#176;C</text>
+    <text class="cap" x="655" y="452">VODA IZLEZ / WATER OUTLET</text>
+    <rect class="b-w" x="655" y="460" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-w" id="t-vout" x="701" y="477" text-anchor="middle">--.-&#176;C</text>
+    <text class="cap" x="582" y="246">ISPARUVAC A / EVAP A</text>
+    <rect class="b-1" x="582" y="252" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-1" id="t-eva" x="628" y="269" text-anchor="middle">--.-&#176;C</text>
+    <text class="cap" x="326" y="246">ISPARUVAC B / EVAP B</text>
+    <rect class="b-2" x="326" y="252" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-2" id="t-evb" x="372" y="269" text-anchor="middle">--.-&#176;C</text>
+    <text class="cap" x="854" y="120">KONDENZ. A / COND. A</text>
+    <rect class="b-1" x="854" y="126" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-1" id="t-cna" x="900" y="143" text-anchor="middle">--.-&#176;C</text>
+    <text class="cap" x="54" y="120">KONDENZ. B / COND. B</text>
+    <rect class="b-2" x="54" y="126" width="92" height="26" rx="13" stroke-width="1.5"/><text class="bv t-2" id="t-cnb" x="100" y="143" text-anchor="middle">--.-&#176;C</text>
+    <line x1="600" y1="560" x2="640" y2="560" class="wpipe"/><text class="lbl" x="650" y="564">Voda / Glycol / Group II fluids</text>
+    <line x1="600" y1="584" x2="640" y2="584" style="stroke:#1b1f23;stroke-width:5;"/><text class="lbl" x="650" y="588">Laden kolo II / Refrigeration circuit II</text>
+    <line x1="600" y1="608" x2="640" y2="608" style="stroke:#e8590c;stroke-width:5;"/><text class="lbl" x="650" y="612">Laden kolo I / Refrigeration circuit I</text>
+  </svg>
+  </div>
+  <div class="side">
+    <div class="card ctrl">
+      <div class="setrow">
+        <button class="rnd" id="btn-down" onclick="act('/tempdown')">-</button>
+        <div class="setbox"><span class="cap2">ZADADENA TEMP. / SETPOINT</span><span id="setpoint">--.-</span><span class="unit">&#176;C</span></div>
+        <button class="rnd" id="btn-up" onclick="act('/tempup')">+</button>
+      </div>
+      <div class="btnrow">
+        <button class="big" id="btn-power" onclick="act('/toggle')">START</button>
+        <button class="big" id="btn-mode" onclick="act('/mode')">LADI</button>
+      </div>
     </div>
+    <div class="card sens">
+      <span class="cap2">SONDI / SENSORS</span>
+      <div class="sgrid">
+        <div class="sitem"><span class="dot dw"></span><div><span class="cap2">VODA VLEZ</span><b id="p-vin">--.-&#176;C</b></div></div>
+        <div class="sitem"><span class="dot dw"></span><div><span class="cap2">VODA IZLEZ</span><b id="p-vout">--.-&#176;C</b></div></div>
+        <div class="sitem"><span class="dot d1"></span><div><span class="cap2">ISPARUVAC A</span><b id="p-eva">--.-&#176;C</b></div></div>
+        <div class="sitem"><span class="dot d2"></span><div><span class="cap2">ISPARUVAC B</span><b id="p-evb">--.-&#176;C</b></div></div>
+        <div class="sitem"><span class="dot d1"></span><div><span class="cap2">KONDENZ. A</span><b id="p-cna">--.-&#176;C</b></div></div>
+        <div class="sitem"><span class="dot d2"></span><div><span class="cap2">KONDENZ. B</span><b id="p-cnb">--.-&#176;C</b></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>NIDZO MONT DOOEL &mdash; Home &amp; Industrial Heating &amp; Cooling Systems</footer>
+<script>
+var $=function(id){return document.getElementById(id);};
+function fmt(v){return (v===null||isNaN(v))?'--.-':Number(v).toFixed(1);}
+function act(u){fetch(u).then(function(){setTimeout(refresh,150);});}
+function refresh(){
+  fetch('/data').then(function(r){return r.json();}).then(function(d){
+    var pairs=[['t-vin','vIn'],['t-vout','vOut'],['t-eva','evA'],['t-evb','evB'],['t-cna','cnA'],['t-cnb','cnB'],
+               ['p-vin','vIn'],['p-vout','vOut'],['p-eva','evA'],['p-evb','evB'],['p-cna','cnA'],['p-cnb','cnB']];
+    for(var i=0;i<pairs.length;i++){$(pairs[i][0]).textContent=fmt(d[pairs[i][1]])+'\u00B0C';}
+    $('setpoint').textContent=fmt(d.setpoint);
+    var fault=String(d.status).indexOf('GRESKA')>=0;
+    document.body.classList.toggle('running', d.run===1 && !fault);
+    document.body.classList.toggle('fault', fault);
+    document.body.classList.toggle('heat', d.heat===1);
+    $('statuspill').textContent='STATUS: '+d.status;
+    var bp=$('btn-power'); bp.textContent=(d.run===1)?'STOP':'START'; bp.classList.toggle('on',d.run===1);
+    $('btn-mode').textContent=(d.heat===1)?'GREE':'LADI';
+  }).catch(function(){$('statuspill').textContent='STATUS: OFFLINE';});
+}
+setInterval(refresh,2000); refresh();
+</script>
 </body>
 </html>
